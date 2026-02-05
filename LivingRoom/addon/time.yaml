@@ -1,0 +1,31 @@
+# Snmp Time
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: America/New_York
+    servers:
+     - 0.pool.ntp.org
+     - 1.pool.ntp.org
+     - 2.pool.ntp.org
+    on_time_sync:
+      - script.execute: time_update
+    on_time:
+      - minutes: '*'
+        seconds: 0
+        then:
+          - script.execute: time_update
+
+# Clock
+script:
+  - id: time_update
+    then:
+      - lvgl.label.update:
+          id: display_time
+          text: !lambda |-
+            static char time_buf[17];
+            auto now = id(sntp_time).now();
+            int hour_12 = now.hour % 12;
+            if (hour_12 == 0) hour_12 = 12;
+            const char* am_pm = (now.hour < 12) ? "AM" : "PM";
+            snprintf(time_buf, sizeof(time_buf), "%d:%02d %s", hour_12, now.minute, am_pm);
+            return time_buf;

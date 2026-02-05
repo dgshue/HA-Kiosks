@@ -1,0 +1,271 @@
+sensor:
+
+  # Top Layer Temperature Display - Outdoor Temperature
+  - platform: homeassistant
+    entity_id: sensor.local_weather_outdoor_temperature_patty_s_house
+    id: outdoor_temperature
+    on_value:
+      - lvgl.label.update:
+          id: temperatures
+          text:
+            format: "Out: %d°F / Down: %d°F / Up: %d°F"
+            args: [ 
+              '(int)round(x)', 
+              '(int)round(id(downstairs_temperature).state)', 
+              '(int)round(id(upstairs_temperature).state)' 
+            ]
+
+  # Top Layer Temperature Display - Downstairs Temperature
+  - platform: homeassistant
+    entity_id: sensor.downstairs_temperature
+    id: downstairs_temperature
+    on_value:
+      - lvgl.label.update:
+          id: temperatures
+          text:
+            format: "Out: %d°F / Down: %d°F / Up: %d°F"
+            args: [ 
+              '(int)round(id(outdoor_temperature).state)', 
+              '(int)round(x)', 
+              '(int)round(id(upstairs_temperature).state)' 
+            ]
+
+  # Top Layer Temperature Display - Upstairs Temperature
+  - platform: homeassistant
+    entity_id: sensor.upstairs_temperature
+    id: upstairs_temperature
+    on_value:
+      - lvgl.label.update:
+          id: temperatures
+          text:
+            format: "Out: %d°F / Down: %d°F / Up: %d°F"
+            args: [ 
+              '(int)round(id(outdoor_temperature).state)', 
+              '(int)round(id(downstairs_temperature).state)', 
+              '(int)round(x)' 
+            ]
+
+  # Downstairs Climate Temperature
+  - platform: homeassistant
+    entity_id: climate.downstairs
+    id: downstairs_climate_temp
+    attribute: current_temperature
+    on_value:
+      - lvgl.label.update:
+          id: downstairs_temp_label
+          text:
+            format: "Down: %d°F"
+            args: [ '(int)round(x)' ]
+
+  # Master Bedroom Temperature
+  - platform: homeassistant
+    entity_id: sensor.master_bedroom_temperature
+    id: master_bedroom_temp_sensor
+    on_value:
+      - lvgl.label.update:
+          id: master_bedroom_temp_display
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+      - lvgl.label.update:
+          id: master_bedroom_temp_display_2
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+
+  # Keek's Room Temperature
+  - platform: homeassistant
+    entity_id: sensor.keek_s_room_temperature
+    id: keeks_room_temp_sensor
+    on_value:
+      - lvgl.label.update:
+          id: keeks_room_temp_display
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+      - lvgl.label.update:
+          id: keeks_room_temp_display_2
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+
+  # Upstairs Climate Temperature
+  - platform: homeassistant
+    entity_id: climate.upstairs
+    id: upstairs_climate_temp
+    attribute: current_temperature
+    on_value:
+      - lvgl.label.update:
+          id: upstairs_temp_label
+          text:
+            format: "Up: %d°F"
+            args: [ '(int)round(x)' ]
+      - lvgl.label.update:
+          id: upstairs_temp_display
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+
+  # Outdoor Temperature Display
+  - platform: homeassistant
+    entity_id: sensor.local_weather_outdoor_temperature_patty_s_house
+    id: outdoor_temp_sensor_display
+    on_value:
+      - lvgl.label.update:
+          id: outdoor_temp_display
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+
+  # Greyson Room Temperature
+  - platform: homeassistant
+    entity_id: sensor.greyson_room_temperature
+    id: greyson_room_temp_sensor
+    on_value:
+      - lvgl.label.update:
+          id: greyson_room_temp_display
+          text:
+            format: "%d°F"
+            args: [ '(int)round(x)' ]
+
+binary_sensor:
+
+  # Living Room Lights
+  - platform: homeassistant
+    id: living_room_lights_state
+    entity_id: light.living_room_lights
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: living_room_lights_button
+          state:
+            checked: !lambda return x;
+
+  # Living Room Lamps
+  - platform: homeassistant
+    id: living_room_lamps_state
+    entity_id: light.living_room_lamps
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: living_room_lamps_button
+          state:
+            checked: !lambda return x;
+
+  # Front Door Lock State
+  - platform: homeassistant
+    id: front_door_lock_state
+    entity_id: lock.front_door
+    attribute: state
+    on_value:
+      - lvgl.widget.update:
+          id: front_door_lock_button
+          state:
+            checked: !lambda return x == "locked";
+      - lvgl.label.update:
+          id: front_door_lock_icon
+          text: !lambda return (x == "locked") ? "$lock" : "$lock_open";
+
+  # Living Room Sound Bar State
+  - platform: homeassistant
+    id: sound_bar_state
+    entity_id: media_player.living_room_sound_bar
+    attribute: state
+    on_value:
+      - lvgl.widget.update:
+          id: living_room_sound_bar_button
+          state:
+            checked: !lambda return x == "playing";
+      - lvgl.label.update:
+          id: sound_bar_icon
+          text: !lambda return (x == "playing") ? "$speaker" : "$speaker_off";
+
+binary_sensor:
+
+  # Master Bedroom Lights
+  - platform: homeassistant
+    id: master_bedroom_lights_state
+    entity_id: light.master_bedroom_lights
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: master_bedroom_lights_button
+          state:
+            checked: !lambda return x;
+
+  # Keek's LEDs
+  - platform: homeassistant
+    id: keeks_leds_state
+    entity_id: light.keek_s_leds
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: keeks_leds_button
+          state:
+            checked: !lambda return x;
+
+  # Kitchen Lights
+  - platform: homeassistant
+    id: kitchen_lights_state
+    entity_id: light.kitchen_lights
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: kitchen_lights_button
+          state:
+            checked: !lambda return x;
+
+  # Outdoor Lights
+  - platform: homeassistant
+    id: outdoor_lights_state
+    entity_id: light.outdoor_lights
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: outdoor_lights_button
+          state:
+            checked: !lambda return x;
+
+  # Driveway Lights Switch
+  - platform: homeassistant
+    id: driveway_lights_state
+    entity_id: switch.driveway_lights
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: driveway_lights_button
+          state:
+            checked: !lambda return x;
+
+  # Truck Switch
+  - platform: homeassistant
+    id: truck_state
+    entity_id: switch.truck
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: truck_button
+          state:
+            checked: !lambda return x;
+
+  # Truck Doors Lock State
+  - platform: homeassistant
+    id: truck_doors_lock_state
+    entity_id: lock.truck_doors
+    attribute: state
+    on_value:
+      - lvgl.widget.update:
+          id: truck_doors_lock_button
+          state:
+            checked: !lambda return x == "locked";
+      - lvgl.label.update:
+          id: truck_doors_lock_icon
+          text: !lambda return (x == "locked") ? "$lock" : "$lock_open";
