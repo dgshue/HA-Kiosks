@@ -1,0 +1,20 @@
+# Combined YAML files (generated from multiple source files)
+LivingRoom/kiosk-living-room-combined.yaml
+LivingRoom/kiosk-living-room-advanced.yaml
+
+# ESPHome build cache
+**/.esphome/
+*.bin
+
+# Secrets
+**/secrets.yaml
+**/secrets*.yaml
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/
